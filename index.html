@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/anldrms/FlightKeeper-permaweb@master/bootstrap4-neon-glow.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <title>FlightKeeper</title>
+    <style type="text/css">
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: "Montserrat", sans-serif;
+        font-weight: 700;
+      }
+      body {
+        font-family: "Roboto Mono", monospace;
+      }
+    </style>
+    <script src="https://unpkg.com/arweave/bundles/web.bundle.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#"
+        ><small><i class="material-icons">flight_takeoff</i></small>
+        FlightKeeper</a
+      >
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" onclick="toggleHiddenSearch()">Search Flight</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" onclick="toggleHiddenFlight()">Flightradar24</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <br />
+    <div class="container">
+      <div class="card">
+        <div class="card-body text-center">
+          <h1 class="card-title">FlightKeeper</h1>
+          <h4>
+            <i class="material-icons">airplanemode_active</i> for aviation buffs
+            by aviation buffs <i class="material-icons">airplanemode_active</i>
+          </h4>
+          <h2>
+            Save your flights forev<a
+              href="https://arweave.org/"
+              style="text-decoration: underline;"
+              >AR</a
+            >!
+          </h2>
+          <p>
+            A forever way to share your flights with your friends or just
+            storing your flights forever with Arweave blockchain.
+          </p>
+        </div>
+      </div>
+      <br />
+      <div id="latestFlights" class="card">
+        <div class="card-body">
+          <h3 class="card-title">
+            View flights on the Arweave blockchain
+          </h3>
+          <p>
+            You can enter
+            <code>dKDV3Ch-uT-25VbEwuFdVNqliugx9RyQdtVlkwO6VyE</code> as TXID.
+            <br />
+            <small
+              >If you'd like to store your flight data on the Arweave like other
+              people, please visit
+              <a href="https://github.com/anldrms/Flightkeeper-permaweb"
+                >GitHub repository</a
+              >.</small
+            >
+          </p>
+          <div id="flights">
+            <form action="#latestFlights">
+              <div class="form-group">
+                <label for="exampleInputEmail1">TXID</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="TXID"
+                  aria-describedby="txidHelp"
+                  placeholder="Please enter transaction ID"
+                />
+                <small id="txidHelp" class="form-text text-muted"
+                  >Transaction data will fetched with ArweaveJS.</small
+                >
+              </div>
+              <button onclick="getFlightDetails()" class="btn btn-primary">
+                View flight details
+              </button>
+            </form>
+            <div id="resultCard" style="display: none;">
+              <div class="card-body">
+                <h3 class="card-title">
+                  Flight details
+                </h3>
+                <div id="result"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br />
+      <div id="hiddenFlights"></div>
+      <div class="card" id="searchFlight" style="display: none;">
+        <div class="card-body">
+          <h2 class="card-title">Search flight for the adventure!</h2>
+          <div class="separator"></div>
+          <div
+            data-skyscanner-widget="SearchWidget"
+            data-origin-geo-lookup="true"
+          ></div>
+          <script
+            src="https://widgets.skyscanner.net/widget-server/js/loader.js"
+            async
+          ></script>
+        </div>
+      </div>
+      <div id="hiddenFlightInformation" class="card" style="display: none;">
+        <div class="card-body">
+          <h2 class="card-title">Live Flight Information</h2>
+          <div class="text-center">
+            <iframe
+              width="auto"
+              height="499"
+              src="https://www.flightradar24.com/simple?lat=37.63lon=122.36&z=12&label1=callsign&weather=1&size=auto"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function toggleHiddenSearch() {
+        var x = document.getElementById("searchFlight");
+        if (x.style.display === "none") {
+          x.style.display = "block";
+        } else {
+          x.style.display = "none";
+        }
+      }
+      function toggleHiddenFlight() {
+        var x = document.getElementById("hiddenFlightInformation");
+        if (x.style.display === "none") {
+          x.style.display = "block";
+        } else {
+          x.style.display = "none";
+        }
+      }
+      function getFlightDetails() {
+        const arweave = Arweave.init({
+          host: "arweave.net", // Hostname or IP address for a Arweave host
+          port: 443, // Port
+          protocol: "https", // Network protocol http or https
+          timeout: 20000,
+          logging: false
+        });
+        var txidValue = document.getElementById("TXID").value;
+        var x = document.getElementById("resultCard");
+        x.style.display = "block";
+        const transaction = arweave.transactions
+          .get(txidValue)
+          .then(transaction => {
+            transaction.get("tags").forEach(tag => {
+              let key = tag.get("name", {
+                decode: true,
+                string: true
+              });
+              let value = tag.get("value", {
+                decode: true,
+                string: true
+              });
+              var output = document.getElementById("result");
+              html = output.innerHTML;
+              html += `<span class="badge badge-primary">${key}</span> ${value}<br>`;
+              output.innerHTML = html;
+            });
+          });
+        element.innerHTML = txidValue;
+      }
+    </script>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
