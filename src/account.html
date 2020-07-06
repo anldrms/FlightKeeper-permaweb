@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FlightKeeper</title>
+    <link
+      rel="stylesheet"
+      href="semantic.min.css"
+    />
+     <link
+      rel="stylesheet"
+      href="icon.min.css"
+    />
+    <script src="./account.js" defer></script>
+    <script
+      src="jquery.min.js"
+    ></script>
+    <script src="web.bundle.min.js"></script>
+    <script
+      src="semantic.min.js"
+    ></script>
+  </head>
+  <body>
+    <br />
+    <div class="ui one container center stackable page grid">
+      <div class="ui grid" id="account_home">
+        <div class="thirteen wide column">
+          <a class="header" href="./index.html">FlightKeeper</a>
+          <div class="ui divider"></div>
+          <h2>
+            Arweave wallet is required to continue
+          </h2>
+          <p>
+            Go to <a href="https://arweave.org/">Arweave website</a> for more
+            information about Arweave and get an small balance of 1 AR to your
+            wallet.
+          </p>
+          <p>
+            This application allows you to
+            <b>share your flight data on the flight feed</b>, also you can view
+            your previous flights with this permaweb application.
+          </p>
+          <div class="ui card">
+            <div class="content">
+              <p class="header">
+                Please select your Arweave key file
+              </p>
+              <p>
+                <small
+                  >Key file starts with your wallet address ends with
+                  <code>.json</code> by default.</small
+                >
+              </p>
+              <div class="description">
+                <input type="file" id="arweave-keyfile" name="filename" required/>
+                <br /><br />
+                <div class="ui button" onclick="login()" tabindex="0">
+                  <div class="visible content">Next</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid" id="account_dashboard" style="display: none;">
+        <h2>
+          Dashboard
+        </h2>
+        <p>
+          Welcome! Your wallet address is:<br />
+          <span id="walletAddress"></span>
+        </p>
+        <p>
+          Every flight you add will be public and is going to stored
+          <a href="https://arweave.org">forever</a>.
+        </p>
+        <div class="ui buttons">
+          <button class="ui button" onclick="$('.ui.modal').modal('show');">
+            Add new flight
+          </button>
+        </div>
+        <br /><br />
+        <div class="ui grid">
+          <div class="fifteen wide column">
+            <h2>
+              Feed
+            </h2>
+            <p>
+              This is an public flight feed with flight data published by other
+              people. Login to see your previous flights.
+            </p>
+            <div class="ui cards" id="feed"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <pre id="output"></pre>
+    <div class="ui modal">
+      <i class="close icon"></i>
+      <div class="header">
+        Add new flight
+      </div>
+      <div class="image content">
+        <div class="description">
+          <div class="ui header">
+            Please add flight details
+          </div>
+          <form class="ui form">
+            <div class="field">
+              <label>Flight number</label>
+              <input
+                type="text"
+                id="flight_number"
+                placeholder="Flight number"
+              />
+            </div>
+            <div class="field">
+              <label>Departure airport</label>
+              <input
+                type="text"
+                id="departure_airport"
+                placeholder="Departure airport"
+              />
+            </div>
+            <div class="field">
+              <label>Destination airport</label>
+              <input
+                type="text"
+                id="destination_airport"
+                placeholder="Destination airport"
+              />
+            </div>
+            <div class="field">
+              <label>Comments (not required)</label>
+              <input type="text" id="comments" placeholder="Comments" />
+            </div>
+          </form>
+          <br />
+          <br />
+          <p>Your flight details will be public and will stored forever.</p>
+        </div>
+      </div>
+      <div class="actions">
+        <div class="ui black deny button">
+          Cancel
+        </div>
+        <div
+          class="ui positive right labeled icon button"
+          onclick="uploadFlightDetails()"
+        >
+          Add flight
+          <i class="checkmark icon"></i>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
